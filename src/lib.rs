@@ -1,6 +1,7 @@
 use pyo3::prelude::*;
-use pyo3::types::PyBytes;
+use pyo3::types::{ PyBytes, PyByteArray };
 use pyo3::exceptions::PyValueError;
+use zeroize::Zeroize;
 
 // Rijndaels forward s-box
 fn sbox(byte: u8) -> u8 {
@@ -382,9 +383,57 @@ fn aes_ctr_py(py: Python, data: &[u8], key: &[u8], nonce: &[u8]) -> PyResult<Py<
     Ok(PyBytes::new(py, &result).into())
 }
 
+#[pyclass]
+pub struct AesCtrSecret {
+    key: [u8; 32],
+    nonce: [u8; 8],
+}
+
+#[pymethods]
+impl AesCtrSecret {
+    #[new]
+    fn new(key: &PyByteArray, nonce: &PyByteArray) -> PyResult<Self> {
+        let key_slice = unsafe { key.as_bytes_mut() };
+        let nonce_slice = unsafe { nonce.as_bytes_mut() };
+
+        if key_slice.len() != 32 {
+            return Err(PyValueError::new_err("Key must be 32 bytes (256 bits)"));
+        }
+
+        if nonce_slice.len() != 8 {
+            return Err(PyValueError::new_err("Nonce must be 8 bytes (64 bits)"));
+        }
+
+        let mut key = [0u8; 32];
+        let mut nonce = [0u8; 8];
+
+        key.copy_from_slice(key_slice);
+        nonce.copy_from_slice(nonce_slice);
+
+        key_slice.fill(0);
+        nonce_slice.fill(0);
+
+        Ok(Self { key, nonce })
+    }
+
+    pub fn encrypt<'py>(&self, py: Python<'py>, data: &PyByteArray) -> PyResult<&'py PyBytes> {
+        let data_slice = unsafe { data.as_bytes() };
+        let result = aes_ctr(data_slice, &self.key, &self.nonce);
+        Ok(PyBytes::new(py, &result))
+    }
+}
+
+impl Drop for AesCtrSecret {
+    fn drop(&mut self) {
+        self.key.zeroize();
+        self.nonce.zeroize();
+    }
+}
+
 #[pymodule]
 fn aes_ctr_rspy(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(aes_ctr_py, m)?)?;
+    m.add_class::<AesCtrSecret>()?;
     Ok(())
 }
 
