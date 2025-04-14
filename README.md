@@ -1,3 +1,9 @@
+## Requirements
+---
+- Python 3.12
+- Rust (via [rustup.rs](https://rustup.rs))
+- maturin (PyPI)
+
 ## Installing dependencies
 ---
 ```bash
@@ -9,7 +15,10 @@ pip install -r requirements.txt
 ```bash
 maturin build --release
 ```
-The wheel will be in target/wheels/
+The wheel will be in target/wheels/, installable per pip via 
+```bash
+pip install target/wheels/*.whl
+```
 
 ## Usage
 ---
@@ -26,3 +35,7 @@ decrypted = aesify(encrypted, key, nonce)
 print(decrypted)
 ```
 Should print *b'Hello, world!'* 
+
+## License
+---
+MIT License.
