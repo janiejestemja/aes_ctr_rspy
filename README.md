@@ -63,7 +63,7 @@ deciphered = secret2.encrypt(ciphertext)
 print(deciphered)
 ```
 
-*Note*: The AesCtrSecret struct overwrites the Python ByteArray passed as arguements to it, and zeroizes corresponding memory in Rust, thus has to be initialized for every encryption/decryption cycle.
+*Note*: The AesCtrSecret struct overwrites the Python ByteArray passed as arguements to it, and zeroizes corresponding memory in Rust, thus has to be initialized/constructed for every encryption/decryption cycle.
 
 ## License
 ---
