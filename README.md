@@ -22,6 +22,8 @@ pip install target/wheels/*.whl
 
 ## Usage
 ---
+### Legacy
+---
 ```python
 from aes_ctr_rspy import aes_ctr_py as aesify
 
@@ -36,6 +38,8 @@ print(decrypted)
 ```
 Should print *b'Hello, world!'* 
 
+### Current
+---
 ```python
 from aes_ctr_rspy import AesCtrSecret
 
