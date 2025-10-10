@@ -3,7 +3,7 @@ requires = ["maturin>=1.0, <2.0"]
 build-backend = "maturin"
 
 [project]
-name = "aes_ctr_rspy"
+name = "rspy"
 requires-python = ">=3.12"
 version = "0.1.0"
 classifiers = [
