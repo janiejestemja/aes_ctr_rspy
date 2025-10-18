@@ -1,0 +1,47 @@
+name: Roll release
+
+on:
+  workflow_dispatch:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check Repo...
+      uses: actions/checkout@v5
+
+
+    - name: Set up Rust...
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        override: true
+
+    - name: Set up Python...
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+
+    - name: Build wheel...
+      run: |
+        source .venv/bin/activate
+        pip install -r requirements.txt
+        maturin build --release
+        pip install target/wheels/*.whl
+
+    - name: Release...
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: roll
+        body_path: README.md
+        files: target/wheels/*.whl
+        draft: true
+        prerelease: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
