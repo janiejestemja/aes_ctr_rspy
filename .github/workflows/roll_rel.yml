@@ -28,6 +28,12 @@ jobs:
       with:
         python-version: "3.12"
 
+    - name: Create virtual environment...
+      run: |
+        python -m venv .venv
+        source .venv/bin/activate
+        pip install --upgrade pip
+
     - name: Build wheel...
       run: |
         source .venv/bin/activate
