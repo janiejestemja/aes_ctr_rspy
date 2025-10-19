@@ -16,11 +16,9 @@ pip install --upgrade pip
 pip install Downloads/aes_ctr_rspy*.whl
 ```
 
-## Usage (/demo/...)
+## Example usage
 ---
-> Scripts for demo are in the `demo` directory found at the root of this repository.
 
-*/demo/usage.py*
 ```python
 from aes_ctr_rspy import AesCtrSecret
 
@@ -74,6 +72,8 @@ Should print *b'Hello, world!'*
 
 ## Developer notes...
 ---
+> Building from source
+
 ### Requirements
 ---
 - Python 3.12
