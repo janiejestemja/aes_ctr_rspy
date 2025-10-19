@@ -1,45 +1,25 @@
-## Requirements
+## aes_ctr_rspy
 ---
-- Python 3.12
-- Rust (via [rustup.rs](https://rustup.rs))
-- maturin (PyPI)
+> AES CTR 256 bits encryption written in Rust & compiled to Python extension. 
 
-## Installing dependencies
+## Installation
 ---
-```bash
-pip install -r requirements.txt
-```
+> Requires `Python 3.12`
 
-## Building the wheel
----
-```bash
-maturin build --release
-```
-The wheel will be in target/wheels/, installable per pip via 
-```bash
-pip install target/wheels/*.whl
+Download Asset from latest release on github.
+
+Setup a venv and install the downloaded wheel via pip...
+```python
+python3.12 -m venv .venv
+source .venv/bin/activate
+pip install --upgrade pip
+pip install Downloads/aes_ctr_rspy*.whl
 ```
 
 ## Usage (/demo/...)
 ---
-### Outdated usage (legacy)
----
-```python
-from aes_ctr_rspy import aes_ctr_py as aesify
+> Scripts for demo are in the `demo` directory found at the root of this repository.
 
-data = b"Hello, world!"
-key = b"0" * 32 
-nonce = b"0" * 8 
-
-encrypted = aesify(data, key, nonce)
-decrypted = aesify(encrypted, key, nonce)
-
-print(decrypted)
-```
-Should print *b'Hello, world!'* 
-
-### Intended usage (current)
----
 */demo/usage.py*
 ```python
 from aes_ctr_rspy import AesCtrSecret
@@ -73,38 +53,48 @@ Deciphered text:  b'This is a little longer test message than usual, to check if
 
 *Note*: The AesCtrSecret struct overwrites the Python ByteArray passed as arguements to it, and zeroizes corresponding memory in Rust, thus has to be initialized/constructed for every encryption/decryption cycle.
 
-### Known plaintext attack
+--
+
+### Outdated usage (legacy)
 ---
-If two messages use the same key and nonce
-```plaintext
-cipher1 = plaintext1 XOR keystream
-cipher2 = plaintext2 XOR same_keystream
-```
-
-Then
-```plaintext
-cipher1 XOR cipher2 = plaintext1 XOR plaintext2
-```
-
-Can be thought of in Python like
 ```python
-def xor_bytes(a, b):
-    return bytearray(x ^ y for x, y in zip(a, b))
+from aes_ctr_rspy import aes_ctr_py as aesify
 
-# Encrypt data1 and data2
-ciphertext1 = bytearray(secret.encrypt(data1))
-ciphertext2 = bytearray(secret.encrypt(data2))
+data = b"Hello, world!"
+key = b"0" * 32 
+nonce = b"0" * 8 
 
-# XOR ciphertexts
-xored_ciphers = xor_bytes(ciphertext1, ciphertext2)
+encrypted = aesify(data, key, nonce)
+decrypted = aesify(encrypted, key, nonce)
 
-# Given data2 recover data1
-recovered = xor_bytes(xored_ciphers, data2)
-# Given data1 recover data2
-recovered2 = xor_bytes(xored_ciphers, data)
+print(decrypted)
+```
+Should print *b'Hello, world!'* 
+
+
+## Developer notes...
+---
+### Requirements
+---
+- Python 3.12
+- Rust (via [rustup.rs](https://rustup.rs))
+- maturin (PyPI)
+
+## Installing dependencies
+---
+```bash
+pip install -r requirements.txt
 ```
 
-*Take a look at /demo/kpa.py for more details...*
+## Building the wheel
+---
+```bash
+maturin build --release
+```
+The wheel will be in target/wheels/, installable per pip via 
+```bash
+pip install target/wheels/*.whl
+```
 
 ## License
 ---
